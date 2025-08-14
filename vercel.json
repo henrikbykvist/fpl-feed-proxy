@@ -1,0 +1,8 @@
+{
+  "version": 2,
+  "routes": [
+    { "src": "/api/fpl", "dest": "/api/fpl.js" },
+    { "src": "/actions.json", "dest": "/api/actions.js" },
+    { "src": "/fpl-openapi.yaml", "dest": "/api/openapi.js" }
+  ]
+}
