@@ -15,7 +15,15 @@ export default function handler(req, res) {
             responses: {
               200: {
                 description: 'OK',
-                content: { 'application/json': { schema: { type: 'object', properties: { ok: { type: 'boolean' }, ts: { type: 'integer' }, hint: { type: 'string' } }, additionalProperties: true } } }
+                content: {
+                  'application/json': {
+                    schema: {
+                      type: 'object',
+                      properties: { ok: { type: 'boolean' }, ts: { type: 'integer' }, hint: { type: 'string' } },
+                      additionalProperties: true
+                    }
+                  }
+                }
               }
             }
           }
@@ -56,7 +64,11 @@ export default function handler(req, res) {
             responses: {
               200: {
                 description: 'OK – stor JSON',
-                content: { 'application/json': { schema: { type: 'object', properties: {}, additionalProperties: true } } }
+                content: {
+                  'application/json': {
+                    schema: { type: 'object', properties: {}, additionalProperties: true }
+                  }
+                }
               }
             }
           }
