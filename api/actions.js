@@ -5,7 +5,11 @@ export default function handler(req, res) {
     .setHeader('Content-Type','application/json')
     .json({
       openapi: '3.1.0',
-      info: { title: 'FPL Feed Proxy - Summary', version: '1.0.2' },
+      info: {
+        title: 'FPL Feed Proxy - Summary',
+        version: '1.0.3',
+        description: 'OpenAPI for GPT Actions: ping, summary (slank), og fpl (full).'
+      },
       servers: [{ url: 'https://fpl-feed-proxy.vercel.app' }],
       paths: {
         '/api/ping': {
@@ -19,8 +23,15 @@ export default function handler(req, res) {
                   'application/json': {
                     schema: {
                       type: 'object',
-                      properties: { ok: { type: 'boolean' }, ts: { type: 'integer' }, hint: { type: 'string' } },
+                      properties: {
+                        ok: { type: 'boolean' },
+                        ts: { type: 'integer' },
+                        hint: { type: 'string' }
+                      },
                       additionalProperties: true
+                    },
+                    examples: {
+                      ok: { value: { ok: true, ts: 1755180000000, hint: 'ping' } }
                     }
                   }
                 }
@@ -28,20 +39,23 @@ export default function handler(req, res) {
             }
           }
         },
+
         '/api/summary': {
           get: {
             operationId: 'getSummary',
             summary: 'Hent FPL summary-data (slanket feed)',
+            // Viktig: ingen "required" params her, enkel validering
             parameters: [
-              { name: 'gw', in: 'query', required: false, schema: { type: 'integer', minimum: 0, maximum: 50 }, description: 'Gameweek-nummer. Hvis utelatt, server default.' },
-              { name: 'fixtures', in: 'query', required: false, schema: { type: 'integer', minimum: 1, maximum: 200, default: 20 }, description: 'Antall fixtures (default 20).' },
-              { name: 'topn', in: 'query', required: false, schema: { type: 'integer', minimum: 1, maximum: 600, default: 300 }, description: 'Antall spillere (default 300).' }
+              { name: 'gw', in: 'query', required: false, schema: { type: 'integer' }, description: 'Gameweek (valgfri)' },
+              { name: 'fixtures', in: 'query', required: false, schema: { type: 'integer' }, description: 'Antall fixtures (valgfri)' },
+              { name: 'topn', in: 'query', required: false, schema: { type: 'integer' }, description: 'Antall spillere (valgfri)' }
             ],
             responses: {
               200: {
                 description: 'OK – slank JSON',
                 content: {
                   'application/json': {
+                    // Løst schema for å unngå connector-feil
                     schema: { type: 'object', properties: {}, additionalProperties: true },
                     examples: {
                       sample: {
@@ -57,13 +71,14 @@ export default function handler(req, res) {
             }
           }
         },
+
         '/api/fpl': {
           get: {
             operationId: 'getFplFeed',
             summary: 'Hent full FPL-feed (stor)',
             responses: {
               200: {
-                description: 'OK – stor JSON',
+                description: 'OK – stor JSON (kan være for stor for GPT)',
                 content: {
                   'application/json': {
                     schema: { type: 'object', properties: {}, additionalProperties: true }
